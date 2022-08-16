@@ -14,8 +14,8 @@ class SwipeActionButton: UIButton {
 
     var maximumImageHeight: CGFloat = 0
     var verticalAlignment: SwipeVerticalAlignment = .centerFirstBaseline
-    
-    
+    var isVertical: Bool = true
+    var contentSpacing: CGFloat = 8
     var currentSpacing: CGFloat {
         return (currentTitle?.isEmpty == false && imageHeight > 0) ? spacing : 0
     }
@@ -40,7 +40,6 @@ class SwipeActionButton: UIButton {
     
     convenience init(action: SwipeAction) {
         self.init(frame: .zero)
-
         contentHorizontalAlignment = .center
         
         tintColor = action.textColor ?? .white
@@ -59,6 +58,7 @@ class SwipeActionButton: UIButton {
         setTitleColor(highlightedTextColor, for: .highlighted)
         setImage(action.image, for: .normal)
         setImage(action.highlightedImage ?? action.image, for: .highlighted)
+        isVertical = action.isVertical
     }
     
     override var isHighlighted: Bool {
@@ -87,15 +87,28 @@ class SwipeActionButton: UIButton {
     }
     
     override func titleRect(forContentRect contentRect: CGRect) -> CGRect {
+        if isVertical {
+            var rect = contentRect.center(size: titleBoundingRect(with: contentRect.size).size)
+            rect.origin.y = alignmentRect.minY + imageHeight + currentSpacing
+            return rect.integral
+        }
+        let imageSize = currentImage?.size ?? .zero
         var rect = contentRect.center(size: titleBoundingRect(with: contentRect.size).size)
-        rect.origin.y = alignmentRect.minY + imageHeight + currentSpacing
+        rect.origin.x += (imageSize.width + contentSpacing)/2
         return rect.integral
     }
-    
+
     override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
-        var rect = contentRect.center(size: currentImage?.size ?? .zero)
-        rect.origin.y = alignmentRect.minY + (imageHeight - rect.height) / 2
-        return rect
+        if isVertical {
+            var rect = contentRect.center(size: currentImage?.size ?? .zero)
+            rect.origin.y = alignmentRect.minY + (imageHeight - rect.height) / 2
+            return rect
+        }
+        let imageSize = currentImage?.size ?? .zero
+        var imageRect = contentRect.center(size: currentImage?.size ?? .zero)
+        let rect = contentRect.center(size: titleBoundingRect(with: contentRect.size).size)
+        imageRect.origin.x = rect.origin.x - (imageSize.width + contentSpacing)/2
+        return imageRect
     }
 }
 

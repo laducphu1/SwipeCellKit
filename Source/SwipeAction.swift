@@ -45,7 +45,8 @@ public class SwipeAction: NSObject {
     ///
     /// - note: If you do not specify a color, white is used.
     public var textColor: UIColor?
-    
+    var contentSpacing: CGFloat = 8
+
     /// The highlighted text color of the action button.
     ///
     /// - note: If you do not specify a color, `textColor` is used.
@@ -83,6 +84,8 @@ public class SwipeAction: NSObject {
     ///
     /// - note: When set to `true`, the actions menu is automatically hidden when the action is selected. The default value is `false`.
     public var hidesWhenSelected = false
+    
+    public var isVertical: Bool = true
     
     /**
      Constructs a new `SwipeAction` instance.
